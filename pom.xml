@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
+
    <groupId>org.apache.amq</groupId>
    <artifactId>training</artifactId>
    <packaging>pom</packaging>
@@ -11,8 +12,14 @@
       <module>worksheet3</module>
    </modules>
 
+   <parent>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>artemis-pom</artifactId>
+      <version>2.10.0.redhat-00004</version>
+   </parent>
+
    <repositories>
-      <repository>
+      <!-- <repository>
           <id>apache.snapshots</id>
           <name>Apache Development Snapshot Repository</name>
           <url>https://repository.apache.org/content/repositories/snapshots/</url>
@@ -22,11 +29,15 @@
           <snapshots>
               <enabled>true</enabled>
           </snapshots>
-      </repository>
+      </repository> -->
+      <repository>
+         <id>red-hat-ga</id>
+         <url>https://maven.repository.redhat.com/ga</url>
+       </repository>
    </repositories>
 
    <properties>
-      <amq.version>2.0.0-SNAPSHOT</amq.version>
+      <amq.version>2.10.0.redhat-00004</amq.version>
    </properties>
 
    <dependencies>

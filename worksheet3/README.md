@@ -3,9 +3,6 @@
 ## Prerequisites
  
 -   worksheet1 and worksheet2
--   A loopback address configured  
-    
-    route add -net 224.0.0.0 netmask 240.0.0.0 dev lo
 
 ## Shared Store
 
@@ -22,23 +19,56 @@
  (A_MQ_Install_Dir)/bin/artemis create --shared-store --failover-on-shutdown --slave --data ../liveBroker/data --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword --max-hops 1 --port-offset 100 backupBroker
 ```
 
+### config static discovery
+
+By default, artemis will create clustered brokers with UDP-based dynamic discovery. We will change it to static discovery.
+
+-   Add Connector used to discover backupBroker
+
+`<connector>` to `/broker1/etc/broker.xml`
+```xml
+   <!-- Connector used to discover backupBroker -->
+   <connector name="backupBroker-connector">tcp://127.0.0.1:61716</connector>
+```
+
+-   Delete these 2 blocks:
+    -    <broadcast-groups>  
+    -    <discovery-groups>
+
+-   Replace the line inside <cluster-connections> as following:
+
+BEFORE:
+```xml
+<discovery-group-ref discovery-group-name="***" />
+```
+
+AFTER:
+```xml
+<static-connectors>
+   <connector-ref>backupBroker-connector</connector-ref>
+</static-connectors>
+```
+
+## 
+
 -   add a queue to each broker 
 ```xml
-  <addresses>
-     <address name="exampleQueue" type="anycast">
-        <queues>
-           <queue name="exampleQueue"/>
-        </queues>
-     </address>
-  </addresses>
+   <address name="exampleQueue">
+      <anycast>
+         <queue name="exampleQueue" />
+      </anycast>
+   </address>
 ```
 
 -   start both brokers
 ```code
-(liveBrokerHome)/bin/artemis run
-(backupBrokerHome)/bin/artemis run
+liveBroker/bin/artemis run
+backupBroker/bin/artemis run
 ```
 You should see the backup broker announce itself as a backup in the logs.
+```
+AMQ221109: Apache ActiveMQ Artemis Backup Server version 2.10.0.redhat-00004 [2538ddcb-3db5-11ea-80f3-52e42774a09e] started, waiting live to fail before it gets active
+```
 
 -   Now kill the live broker
 
@@ -74,7 +104,15 @@ you will see messages produced and consumed
 
 You will see the backup broker take over and then clients continue to send and receive messages with maybe a warning.
 
--   now kill the backup and restart it
+-   now kill the backup 
+
+You will see clients with connection failure as before.
+
+```
+AMQ212037: Connection failure to /127.0.0.1:61616 has been detected: AMQ219015: The connection was disconnected because of server shutdown [code=DISCONNECTED]
+```
+
+-   and start backup
 
 Once the backup is restarted the clients will continue
 
@@ -83,6 +121,9 @@ Once the backup is restarted the clients will continue
 The live will resume its responsibilities and clients will carry on
 
 ### Creating a Shared Nothing Pair (replicated)
+
+> **A Note on shared nothing high availability**  
+> Shared nothing HA is only supported in a single local data center preferably on the same network subnet. Shared nothing HA is very sensitive to network latency and consistency therefore shared nothing HA configurations where the master is in one data center and the slave is in another are specifically not supported.
 
 -   create a live broker
 

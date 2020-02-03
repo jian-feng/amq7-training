@@ -23,13 +23,13 @@
 
 ## 1. 2つBrokerの構成するクラスタを作成
 
-1. broker1を作成します。
+1. broker1を作成します。  
    以下のコマンドは`C:\redhat`の配下に、`broker1`というBrokerインスタンスを新規作成します。
    ```code
    (A_MQ_Install_Dir)\bin\artemis create  --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword  --max-hops 1 C:\redhat\broker1
    ```
 
-2. broker2を作成します。
+2. broker2を作成します。  
    以下のコマンドは`C:\redhat`の配下に、`broker2`というBrokerインスタンスを新規作成します。
    ```code
    (A_MQ_Install_Dir)\bin\artemis create  --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword  --max-hops 1 --port-offset 100 C:\redhat\broker2
@@ -40,7 +40,7 @@
 
 Broker Clusterは、初期値でUDP-base discoveryと設定されます。以下の手順でStatic Discoveryに変更します。
 
-1. Broker1の設定ファイル`/broker1/etc/broker.xml`を開いて、
+1. Broker1の設定ファイル`/broker1/etc/broker.xml`を開いて、  
       1.1. Broker1からBroker2のCluster Connectorを`<connectors>`に追加します。
       > 既存の`<connector name="artemis">`は削除しないでください。
       ```xml
@@ -50,7 +50,7 @@ Broker Clusterは、初期値でUDP-base discoveryと設定されます。以下
 
       1.2. `<broadcast-groups>` と `<discovery-groups>` のブロック削除します。
 
-      1.3. `<cluster-connections>` の中の1行を以下のように書き換えます。
+      1.3. `<cluster-connections>` の中の1行を以下のように書き換えます。  
       BEFORE:
       ```xml
       <discovery-group-ref discovery-group-name="XXXXX" />
@@ -62,7 +62,7 @@ Broker Clusterは、初期値でUDP-base discoveryと設定されます。以下
       </static-connectors>
       ```
 
-2. Broker2の設定ファイル`/broker2/etc/broker.xml`を開いて、
+2. Broker2の設定ファイル`/broker2/etc/broker.xml`を開いて、  
       2.1. Broker2からBroker1のCluster Connectorを`<connectors>`に追加します。
       > 既存の`<connector name="artemis">`は削除しないでください。
       ```xml
@@ -72,7 +72,7 @@ Broker Clusterは、初期値でUDP-base discoveryと設定されます。以下
 
       2.2. `<broadcast-groups>` と `<discovery-groups>` のブロック削除します。
 
-      2.3. `<cluster-connections>` の中の1行を以下のように書き換えます。
+      2.3. `<cluster-connections>` の中の1行を以下のように書き換えます。  
       BEFORE:
       ```xml
       <discovery-group-ref discovery-group-name="XXXXX" />
@@ -92,21 +92,21 @@ Broker Clusterは、初期値でUDP-base discoveryと設定されます。以下
     ```
 
 4. Brokerインスタンスのログ（コマンドプロンプト上）では、Bridgeが接続された旨のメッセージが表示されることを確認できます。
-```console
-AMQ221027: Bridge ClusterConnectionBridge@4445b19e [name=...] is connected
-```
+    ```console
+    AMQ221027: Bridge ClusterConnectionBridge@4445b19e [name=...] is connected
+    ```
 
 ## 3. Queueのクラスタを定義
 
-2つのBrokerともにanycastのQueueを登録します。
-  `broker[1,2]/etc/broker.xml` の `<addresses>` ブロックに、以下のようにQueueを追記します。
-   ```xml
-   <address name="exampleQueue">
-      <anycast>
-         <queue name="exampleQueue" />
-      </anycast>
-   </address>
-   ```
+2つのBrokerともにanycastのQueueを登録します。  
+`broker[1,2]/etc/broker.xml` の `<addresses>` ブロックに、以下のようにQueueを追記します。
+```xml
+<address name="exampleQueue">
+    <anycast>
+        <queue name="exampleQueue" />
+    </anycast>
+</address>
+```
 
 ## 4. message-load-balancing=ON_DEMANDの動作確認
 
@@ -194,7 +194,7 @@ AMQ221027: Bridge ClusterConnectionBridge@4445b19e [name=...] is connected
 > `<cluster-connections>`設定変更は、Brokerの再起動が必要のため、
 > 一旦、2つのBrokerをすべて停止して設定変更します。
 
-1. Brokerインスタントを停止します。
+1. Brokerインスタントを停止します。  
    先程Broker起動したコンソールにて`Ctrl + C`を押すか、別のコマンドプロンプトで以下のコマンドを実行して、Brokerインスタンスを停止します。
     ```
     C:\redhat\broker1\bin\artemis stop
@@ -239,7 +239,7 @@ AMQ221027: Bridge ClusterConnectionBridge@4445b19e [name=...] is connected
 
 ## 6. Topicのクラスタの設定とテスト
 
-1. 2つのBrokerともにmulticastのQueueを登録します。
+1. 2つのBrokerともにmulticastのQueueを登録します。  
   `broker[1,2]/etc/broker.xml` の `<addresses>` ブロックに、以下のようにQueueを追記します。
    ```xml
    <address name="exampleTopic">

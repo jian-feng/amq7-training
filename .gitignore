@@ -16,3 +16,5 @@ hs_err_pid*
 
 .vscode/
 target/
+
+build.metadata

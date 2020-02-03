@@ -19,22 +19,52 @@
    </parent>
 
    <repositories>
-      <!-- <repository>
-          <id>apache.snapshots</id>
-          <name>Apache Development Snapshot Repository</name>
-          <url>https://repository.apache.org/content/repositories/snapshots/</url>
-          <releases>
-              <enabled>false</enabled>
-          </releases>
-          <snapshots>
-              <enabled>true</enabled>
-          </snapshots>
-      </repository> -->
+      <repository>
+         <id>Maven central</id>
+         <name>Maven central</name>
+         <url>https://repo1.maven.org/maven2</url>
+         <releases>
+            <enabled>true</enabled>
+            <updatePolicy>daily</updatePolicy>
+         </releases>
+         <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>daily</updatePolicy>
+         </snapshots>
+      </repository>
       <repository>
          <id>red-hat-ga</id>
          <url>https://maven.repository.redhat.com/ga</url>
-       </repository>
+      </repository>
    </repositories>
+   <pluginRepositories>
+      <pluginRepository>
+         <id>Maven central</id>
+         <name>Maven central</name>
+         <url>https://repo1.maven.org/maven2</url>
+         <releases>
+            <enabled>true</enabled>
+            <updatePolicy>daily</updatePolicy>
+         </releases>
+         <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>daily</updatePolicy>
+         </snapshots>
+      </pluginRepository>
+      <pluginRepository>
+         <id>redhat-ga-repository</id>
+         <name>Red Hat GA repository</name>
+         <url>http://maven.repository.redhat.com/ga/</url>
+         <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+         </releases>
+         <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>daily</updatePolicy>
+         </snapshots>
+      </pluginRepository>
+   </pluginRepositories>
 
    <properties>
       <amq.version>2.10.0.redhat-00004</amq.version>

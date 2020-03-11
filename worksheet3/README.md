@@ -32,10 +32,10 @@ By default, artemis will create clustered brokers with UDP-based dynamic discove
 ```
 
 -   Delete these 2 blocks:
-    -    <broadcast-groups>  
-    -    <discovery-groups>
+    -    `<broadcast-groups>`  
+    -    `<discovery-groups>`
 
--   Replace the line inside <cluster-connections> as following:
+-   Replace the line inside `<cluster-connections>` as following:
 
 BEFORE:
 ```xml
@@ -79,7 +79,7 @@ The backup should start as a live
 
 -   Now restart the live broker
 
-Since <failover-on-shutdown> is set to true you should see the backup automatically shut down and the live restart
+Since `<failover-on-shutdown>` is set to true you should see the backup automatically shut down and the live restart
 
 - Now configure the clients to use ha, change the connection factory in the jndi.properties to be
 ```code

@@ -1,7 +1,7 @@
 # High Availability
 
 ## Prerequisites
- 
+
 -   worksheet1 and worksheet2
 
 ## Shared Store
@@ -49,9 +49,9 @@ AFTER:
 </static-connectors>
 ```
 
-## 
+### Config Queue for test
 
--   add a queue to each broker 
+-   add a queue to each broker
 ```xml
    <address name="exampleQueue">
       <anycast>
@@ -59,6 +59,8 @@ AFTER:
       </anycast>
    </address>
 ```
+
+### Run test for live-backup failover
 
 -   start both brokers
 ```code
@@ -72,8 +74,8 @@ AMQ221109: Apache ActiveMQ Artemis Backup Server version 2.10.0.redhat-00004 [25
 
 -   Now kill the live broker
 
-
 The backup should start as a live
+
 
 -   Now restart the live broker
 
@@ -85,7 +87,7 @@ connectionFactory.ConnectionFactory=(tcp://localhost:61616?ha=true&retryInterval
 ```
 
 Notice we have configured both brokers in the connection factory but could have used udp
- 
+
 -   from the worksheet3 directory start a queue receiver
 
 ```code
@@ -104,7 +106,7 @@ you will see messages produced and consumed
 
 You will see the backup broker take over and then clients continue to send and receive messages with maybe a warning.
 
--   now kill the backup 
+-   now kill the backup
 
 You will see clients with connection failure as before.
 
@@ -116,11 +118,11 @@ AMQ212037: Connection failure to /127.0.0.1:61616 has been detected: AMQ219015: 
 
 Once the backup is restarted the clients will continue
 
--   now restart the live broker 
+-   now restart the live broker
 
 The live will resume its responsibilities and clients will carry on
 
-### Creating a Shared Nothing Pair (replicated)
+## [NOT CONFIRMED] Creating a Shared Nothing Pair (replicated)
 
 > **A Note on shared nothing high availability**  
 > Shared nothing HA is only supported in a single local data center preferably on the same network subnet. Shared nothing HA is very sensitive to network latency and consistency therefore shared nothing HA configurations where the master is in one data center and the slave is in another are specifically not supported.
@@ -130,37 +132,36 @@ The live will resume its responsibilities and clients will carry on
 ```code
 $ARTEMIS_HOME/bin/artemis create --replicated --failover-on-shutdown  --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword  --max-hops 1 repLiveBroker
 ```
-   
+
 -   create a backup broker    
 
 ```code
 $ARTEMIS_HOME/bin/artemis create --replicated --failover-on-shutdown --slave --user admin --password password --role admin --allow-anonymous y --clustered --host 127.0.0.1 --cluster-user clusterUser --cluster-password clusterPassword  --max-hops 1 --port-offset 100 repBackupBroker
 ```
--   add a queue to each broker 
+-   add a queue to each broker.xml
 ```xml
-  <addresses>
-     <address name="exampleQueue" type="anycast">
-        <queues>
-           <queue name="exampleQueue"/>
-        </queues>
-     </address>
-  </addresses>
+<address name="exampleQueue">
+   <anycast>
+      <queue name="exampleQueue" />
+   </anycast>
+</address>
 ```
+
 -   start both brokers
- 
+
  ```code
  (repLiveBrokerHome)/bin/artemis run
  (repBackupBrokerHome)/bin/artemis run
  ```
  You should see the backup broker announce itself as a backup in the logs and the journal being replicated.
- 
+
  -   Now kill the live broker
- 
- 
+
+
  The backup should start as a live
- 
+
  -  Before we restart the live broker we need to add some configuration to the live broker, so update the broker.xml and update
- 
+
  ```xml
  <ha-policy>
   <replication>
@@ -170,11 +171,11 @@ $ARTEMIS_HOME/bin/artemis create --replicated --failover-on-shutdown --slave --u
   </replication>
 </ha-policy>
  ```
- 
+
  Without this the live broker would just start without checking for a backup broker that has failed over so always configure this
- 
+
  -   Now restart the live broker
- 
+
 you will see the live broker start and replicate back from the backup but notice it doesnt start
 
 -   So manually kill the backup broker
@@ -198,8 +199,8 @@ You will see the live take over
 -   restart the live
 
 you will now see the live broker replicate back then take over as live
- 
- 
+
+
 -   from the worksheet3 directory start a queue receiver
 
 ```code
@@ -213,9 +214,3 @@ mvn verify -PqueueSender
 ```
 
 - play around killing the brokers
-
-
-    
- 
-
-
